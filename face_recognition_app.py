@@ -263,41 +263,6 @@ class FaceRecognizer:
             cv2.imwrite(filename, self.current_frame)
             print(f"Screenshot saved as {filename}")
 
-    def toggle_video_recording(self):
-        """Toggle video recording state with labels"""
-        if not self.is_recording_video:
-            label = self.label_entry.get().strip() or "unnamed"
-            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = os.path.join(self.output_folder, f"{label}_video_{timestamp}.avi")
-            fourcc = cv2.VideoWriter_fourcc(*'XVID')
-            self.video_writer = cv2.VideoWriter(filename, fourcc, 20.0, (640, 480))
-            self.is_recording_video = True
-            self.video_btn.config(text="Stop Recording")
-        else:
-            self.is_recording_video = False
-            if self.video_writer:
-                self.video_writer.release()
-                self.video_writer = None
-            self.video_btn.config(text="Start Recording")
-
-    def toggle_audio_recording(self):
-        """Toggle audio recording state"""
-        if not self.is_recording_audio:
-            self.audio_frames = []
-            self.audio = pyaudio.PyAudio()
-            self.audio_stream = self.audio.open(
-                format=pyaudio.paInt16,
-                channels=1,
-                rate=44100,
-                input=True,
-                frames_per_buffer=1024,
-                stream_callback=self.audio_callback
-            )
-            self.is_recording_audio = True
-            self.audio_btn.config(text="Stop Audio Recording")
-        else:
-            self.stop_audio_recording()
-
     def audio_callback(self, in_data, frame_count, time_info, status):
         """Callback for audio recording"""
         if self.is_recording_audio:
